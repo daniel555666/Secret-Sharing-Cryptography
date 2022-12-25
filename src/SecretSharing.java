@@ -4,17 +4,16 @@ import java.util.*;
 public class SecretSharing {
 
     int n,k;
-    static int groupsNumber;
     int mod;
 
     public SecretSharing(int n,int k){
         this.n=n;
         this.k=k;
-        this.mod=11;
+        this.mod=2;
     }
 
 
-    public Map<String,Integer> Share(int s){
+    public int[][] Share(int s){
 
         if(s!=0 && s!=1){
             System.out.println(" error : b need to be 1 or 0");
@@ -28,26 +27,30 @@ public class SecretSharing {
         }
         List<int[]> allGrups=new ArrayList<>();
         combinationUtil(arr, n, k, 0, new int[k], 0,allGrups);
-        groupsNumber= allGrups.size();
 
-        Map<String,Integer>shares=new HashMap<>();
+        int[][] shares=new int[n][allGrups.size()];
 
-
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < allGrups.size(); j++) {
+                shares[i][j]=-1; // if we have share with -1 this mean that player i dont have a share of group j.
+            }
+        }
 
         for(int i=0;i<allGrups.size();i++){
             int sum=0;
 
             for (int j = 0; j < this.k-1 ; j++) {
-                int rand=random.nextInt(11);
-                shares.put( i+","+allGrups.get(i)[j], rand );
+                int rand=random.nextInt(this.mod); //allGrups.get(i)[j]][i]
+                int playerNumber=allGrups.get(i)[j];
+                shares[playerNumber][i]=rand ;
                 sum+=rand;
             }
-            shares.put( i+","+allGrups.get(i)[k-1], modolo(s-sum) );
+            shares [allGrups.get(i)[k-1]] [i] =modolo(s-sum);
         }
         return shares;
     }
 
-    public int Recover (int[] A, Map<String,Integer> shares ) {
+    public int Recover (int[] A, int [][] shares ) {
 
         for (int i : A) {
             if (i < 0 || i >= this.n) {
@@ -64,14 +67,14 @@ public class SecretSharing {
         }
         boolean flag;
         int s=0;
-        for (int i = 0; i <groupsNumber; i++) {
+        for (int i = 0; i <shares[0].length; i++) {
             s=0;flag=true;
-            for (int j = 0; j < A.length; j++) {
-                if( !shares.containsKey(i+","+A[j])) {
+            for (int player: A) {
+                if( shares[player][i]==-1) {
                     flag=false;
                     break;
                 }
-                s+=shares.get(i+","+A[j]);
+                s+=shares[player][i];
             }
             if(flag) {
                 return modolo(s);
@@ -103,9 +106,21 @@ public class SecretSharing {
     }
 
     public static void main(String[] args) {
-        SecretSharing secretSharing= Init(12,6); //the first share is 0!
-        Map<String,Integer> shares=secretSharing.Share(0);
-        int[] A={0,2,8,4,11,3};
+        int n=5;
+        int k=3;
+        SecretSharing secretSharing= Init(n,k); //the first share is 0!
+        int[][]shares=secretSharing.Share(0);
+        int[] A={0,2,4};
+        for (int i : A) {
+            System.out.println("player "+i+" shares:");
+            for (int j = 0; j < shares[0].length; j++) {
+                if(shares[i][j]!=-1){
+                    System.out.print("share of group "+j+": "+shares[i][j]+",  ");
+                }
+            }
+            System.out.println("\n");
+        }
+
         System.out.println("the secret is: "+secretSharing.Recover(A,shares));
     }
 
