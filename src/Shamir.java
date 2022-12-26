@@ -122,16 +122,23 @@ import java.util.Random;
 
     public static void main(String[] args) {
 
-        Shamir shamir=Init(50,7);     // set N,K
-        int[] shares=shamir.Share(1);    //Enter the secret
-        System.out.println("players share:");
+        int n=8;  // choose n,k
+        int k=4;
+
+        Shamir shamir=Init(n,k);     // set N,K
+        int[] shares=shamir.Share(1);    //Enter the secret array with the shares of every player
+
+        System.out.println("players share:"); // print all the players share
         for(int i=1;i<=shares.length;i++){
             System.out.print( "player "+i+": "+shares[i-1]+" , ");
         }
         System.out.println("\n");
-        int [] players= {1,3,5,2,7,8,20,25,12};    // choose the players to recover the secret
-        System.out.print("the secret is :");       //the first player is number 1!
-        System.out.println(shamir.Recover(players,shares));
+
+        int [] players= {1,3,5,2};    // choose the players to recover the secret. the first player is number 1!
+        //the first player is number 1! ,  [1,n] .
+
+        System.out.print("the secret is :");
+        System.out.println(shamir.Recover(players,shares)); // recover the secret
 
     }
 

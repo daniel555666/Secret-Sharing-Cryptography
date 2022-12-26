@@ -1,12 +1,12 @@
 import java.util.*;
 
 
-public class SecretSharing {
+public class CNF {
 
     int n,k;
     int mod;
 
-    public SecretSharing(int n,int k){
+    public CNF(int n, int k){
         this.n=n;
         this.k=k;
         this.mod=2;
@@ -99,19 +99,22 @@ public class SecretSharing {
         }
         return i%this.mod;
     }
-    public static SecretSharing Init(int n, int k){
+    public static CNF Init(int n, int k){
 
-        SecretSharing secretSharing=new SecretSharing(n,k);
-        return secretSharing;
+        CNF CNF =new CNF(n,k);
+        return CNF;
     }
 
     public static void main(String[] args) {
-        int n=5;
+
+        int n=5;  // choose n,k
         int k=3;
-        SecretSharing secretSharing= Init(n,k); //the first share is 0!
-        int[][]shares=secretSharing.Share(0);
-        int[] A={0,2,4};
-        for (int i : A) {
+
+        CNF cnf = Init(n,k);
+        int[][]shares= cnf.Share(0); // put the secret and give the shares to the players. every row is player and col is the group number.
+        int[] A={0,2,4};                        // A = the players that want to reveal the secret //the first share is 0!
+
+        for (int i : A) {                       // print the shares of every player in A
             System.out.println("player "+i+" shares:");
             for (int j = 0; j < shares[0].length; j++) {
                 if(shares[i][j]!=-1){
@@ -121,7 +124,8 @@ public class SecretSharing {
             System.out.println("\n");
         }
 
-        System.out.println("the secret is: "+secretSharing.Recover(A,shares));
+
+        System.out.println("the secret is: "+ cnf.Recover(A,shares)); // recover the secret
     }
 
 }
